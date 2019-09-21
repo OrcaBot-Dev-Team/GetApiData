@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Orcabot.Api.Types.EDSM
+namespace Orcabot.Api.Types.EDSM.Commander
 {
 
     #region Ranks
-    public class CommanderJSONRanks
+    public class JSONRanks
     {
-        public int msgnum;
+        public int? msgnum;
         public string msg;
-        public CommanderJSONRanksGeneric<int> ranks;
-        public CommanderJSONRanksGeneric<int> progress;
-        public CommanderJSONRanksGeneric<string> ranksVerbose;
+        public JSONRanksGeneric<int> ranks;
+        public JSONRanksGeneric<int> progress;
+        public JSONRanksGeneric<string> ranksVerbose;
 
     }
-    public class CommanderJSONRanksGeneric<T>
+    public class JSONRanksGeneric<T> 
     {
         public T Combat, Trade, Explore, CQC, Federation, Empire;
     }
     namespace Helper
     {
-        public static class CommanderJSONRanksHelper
+        public static class JSONRanksHelper
         {
             public static CommanderRanks Convert(this CommanderRanks c) {
                 throw new NotImplementedException(); //TODO
@@ -34,22 +34,22 @@ namespace Orcabot.Api.Types.EDSM
     }
     #endregion
     #region Credits
-    public class CommanderJSONCredits
+    public class JSONCredits
     {
-        public int msgnum;
+        public int? msgnum;
         public string msg;
-        public CommanderJSONCreditsValue[] credits;
+        public JSONCreditsValue[] credits;
     }
-    public class CommanderJSONCreditsValue
+    public class JSONCreditsValue
     {
-        public long balance, loan;
+        public long? balance, loan;
         public string date;
     }
 
     namespace Helper {
-        public static class CommanderJSONCreditsHelper
+        public static class JSONCreditsHelper
         {
-            public static CommanderCredits Convert(this CommanderJSONCredits commanderJSONCredits) {
+            public static CommanderCredits Convert(this JSONCredits commanderJSONCredits) {
                 throw new NotImplementedException(); //TODO
             }
         }
@@ -60,25 +60,25 @@ namespace Orcabot.Api.Types.EDSM
     }
     #endregion
     #region Materials
-    public class CommanderJSONMaterials
+    public class JSONMaterials
     {
-        public int msgnum;
+        public int? msgnum;
         public string msg;
-        public CommanderJSONMaterialsEntry[] materials;
-        public CommanderJSONMaterialsEntry[] data;
-        public CommanderJSONMaterialsEntry[] cargo;
+        public JSONMaterialsEntry[] materials;
+        public JSONMaterialsEntry[] data;
+        public JSONMaterialsEntry[] cargo;
 
     }
-    public class CommanderJSONMaterialsEntry
+    public class JSONMaterialsEntry
     {
         public string type, name;
-        public int qty;
+        public int? qty;
     }
     namespace Helper
     {
-        public static class CommanderJSONMaterialsHelper
+        public static class JSONMaterialsHelper
         {
-            public static CommanderMaterials Convert(this CommanderJSONMaterials commanderJSONMaterials) {
+            public static CommanderMaterials Convert(this JSONMaterials commanderJSONMaterials) {
                 throw new NotImplementedException(); //TODO
             }
         }
