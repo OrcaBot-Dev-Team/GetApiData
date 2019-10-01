@@ -6,7 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="EDSM\" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Orcabot-Shared-Types" Version="1.0.3" />
   </ItemGroup>
 
 </Project>

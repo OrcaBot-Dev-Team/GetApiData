@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Orcabot.Api.Types.EDSM.Logs
 {
-    public class JSONPosition
+    public class JSONPosition :IApiResponse
     {
         public int? msgnum;
         public long? systemId;

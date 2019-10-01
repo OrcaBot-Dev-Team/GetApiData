@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+using Orcabot.Types.Enums.Ranks;
 namespace Orcabot.Api.Types.EDSM.Commander
 {
 
     #region Ranks
-    public class JSONRanks
+    public class JSONRanks : IApiResponse
     {
         public int? msgnum;
         public string msg;
@@ -23,18 +23,23 @@ namespace Orcabot.Api.Types.EDSM.Commander
     {
         public static class JSONRanksHelper
         {
-            public static CommanderRanks Convert(this CommanderRanks c) {
+            public static Ranks Convert(this Ranks c) {
                 throw new NotImplementedException(); //TODO
             }
         }
     }
-    public class CommanderRanks
+    public class Ranks
     {
-        //TODO
+        public Combat Combat;
+        public Trade Trade;
+        public Explore Explore;
+        public Federation Federation;
+        public Empire Imperial;
     }
+
     #endregion
     #region Credits
-    public class JSONCredits
+    public class JSONCredits :IApiResponse
     {
         public int? msgnum;
         public string msg;
@@ -49,18 +54,18 @@ namespace Orcabot.Api.Types.EDSM.Commander
     namespace Helper {
         public static class JSONCreditsHelper
         {
-            public static CommanderCredits Convert(this JSONCredits commanderJSONCredits) {
+            public static Credits Convert(this JSONCredits commanderJSONCredits) {
                 throw new NotImplementedException(); //TODO
             }
         }
     }
-    public class CommanderCredits
+    public class Credits
     {
         //TODO
     }
     #endregion
     #region Materials
-    public class JSONMaterials
+    public class JSONMaterials :IApiResponse
     {
         public int? msgnum;
         public string msg;
@@ -78,12 +83,12 @@ namespace Orcabot.Api.Types.EDSM.Commander
     {
         public static class JSONMaterialsHelper
         {
-            public static CommanderMaterials Convert(this JSONMaterials commanderJSONMaterials) {
+            public static Materials Convert(this JSONMaterials commanderJSONMaterials) {
                 throw new NotImplementedException(); //TODO
             }
         }
     }
-    public class CommanderMaterials
+    public class Materials
     {
         //TODO
     }

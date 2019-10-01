@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 
 
-namespace Orcabot.Api.Types.EDSM
+namespace Orcabot.Api.Types.EDSM.ApiStatus
 {
-    public class ApiStatusJSON
+    public class JSON : IApiResponse
     {
         public string lastUpdate, type, message;
         public int status;
@@ -15,7 +15,7 @@ namespace Orcabot.Api.Types.EDSM
     {
        public static class ApiStatusHelper
         {
-            public static ApiStatus Convert(this ApiStatusJSON apiStatusJSON) {
+            public static ApiStatus Convert(this JSON apiStatusJSON) {
                 return new ApiStatus {
                     LastUpdate = DateTime.ParseExact(apiStatusJSON.lastUpdate, "yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture),
                     Type = Enums.Helper.GetApiStatusType(apiStatusJSON.type),

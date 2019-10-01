@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Orcabot.Api.Types.EDSM.System_
+
+namespace Orcabot.Api.Types.EDSM.StarSystem
 {
     #region Stations
-    public class StationsJSON
+    public class StationsJSON : IApiResponse
     {
         public int? id;
         public string name;
@@ -41,13 +41,13 @@ namespace Orcabot.Api.Types.EDSM.System_
     }
     #endregion
     #region Traffic
-    public class TrafficJSON
+    public class TrafficJSON : IApiResponse
     {
         public int? id, id64;
         public string name, url;
         public TrafficJSONSummary traffic;
         public Dictionary<string, int> breakdown;
-        
+
     }
     public class TrafficJSONSummary
     {
@@ -68,7 +68,7 @@ namespace Orcabot.Api.Types.EDSM.System_
     }
     #endregion
     #region Deaths
-    public class DeathsJSON
+    public class DeathsJSON : IApiResponse
     {
         public int? id, id64;
         public string name, url;
