@@ -1,10 +1,7 @@
-﻿using System;
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using NUnit.Framework;
+using System;
+using System.Threading.Tasks;
 
 namespace Orcabot.Api.EDSM.Test
 {
@@ -16,32 +13,18 @@ namespace Orcabot.Api.EDSM.Test
             Console.WriteLine("");
         }
     }
-
-    [TestClass]
-    public class Status
+    public class CommanderTest
     {
-        
-
-        [TestMethod]
-        public async Task GetStatus() {
-            
-            var response = await EdsmAPI.GetApiStatus();
-            response.Dump();
-           
-        }
-    }
-    [TestClass]
-    public class Commander
-    {
-        const string publicCommanderName = "Schitt Staynes";
-        const string privateCommanderName = "WDX";
-        const string nonexistentCommanderName = "ddsaDSAD2312";
-        const string emptyCommanderNameWhiteSpaces = "   ";
-  
-        [TestClass]
+       
         public class Ranks
+
         {
-            [TestMethod]
+            const string publicCommanderName = "Schitt Staynes";
+            const string privateCommanderName = "WDX";
+            const string nonexistentCommanderName = "ddsaDSAD2312";
+            const string emptyCommanderNameWhiteSpaces = "   ";
+
+            [Test]
             public async Task GetCommanderPublic() {
 
                 var response = await EdsmAPI.GetCommanderRanks(publicCommanderName);
@@ -49,28 +32,28 @@ namespace Orcabot.Api.EDSM.Test
                 Assert.IsNotNull(response.Data);
                 Assert.IsTrue(response.MessageNumber == 100);
             }
-            [TestMethod]
+            [Test]
             public async Task FailCommanderPrivate() {
                 var response = await EdsmAPI.GetCommanderRanks(privateCommanderName);
                 response.Dump();
                 Assert.IsNull(response.Data);
                 Assert.IsTrue(response.MessageNumber == 207);
             }
-            [TestMethod]
+            [Test]
             public async Task FailCommanderWhiteSpaces() {
                 var response = await EdsmAPI.GetCommanderRanks(emptyCommanderNameWhiteSpaces);
                 response.Dump();
                 Assert.IsNull(response.Data);
                 Assert.IsTrue(response.MessageNumber == 201);
             }
-            [TestMethod]
+            [Test]
             public async Task FailCommanderEmptyInput() {
                 var response = await EdsmAPI.GetCommanderRanks(String.Empty);
                 response.Dump();
                 Assert.IsNull(response.Data);
                 Assert.IsTrue(response.MessageNumber == 201);
             }
-            [TestMethod]
+            [Test]
             public async Task FailCommanderWrongInput() {
                 var response = await EdsmAPI.GetCommanderRanks(nonexistentCommanderName);
                 response.Dump();
@@ -78,7 +61,7 @@ namespace Orcabot.Api.EDSM.Test
                 Assert.IsTrue(response.MessageNumber == 203);
             }
         }
-        
-       
+
+
     }
 }
