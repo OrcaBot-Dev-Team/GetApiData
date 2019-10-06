@@ -9,14 +9,14 @@ using Orcabot.Api.Types.EDSM.Commander.Helper;
 
 namespace Orcabot.Api.EDSM
 {
-    static partial class EdsmAPI
+    static public partial class EdsmAPI
     {
  
 
         public static async Task<Types.EDSM.ApiStatus.ApiStatus> GetApiStatus() {
             string url = "https://www.edsm.net/api-status-v1/elite-server";
             var response = await EdsmApiCaller<Types.EDSM.ApiStatus.JSON>.GetWebJSONAsync(url);
-            if (!response.hasError) {
+            if (!response.HasError) {
 
                 return response.response.Convert();
                 

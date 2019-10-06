@@ -3,24 +3,26 @@ using System.Threading.Tasks;
 using Orcabot.Api.Types.EDSM.StarSystem;
 using Orcabot.Api.Types.EDSM.StarSystem.Helper;
 using Orcabot.Api.Types.EDSM.Systems;
+using Orcabot.Api.Types;
 
 namespace Orcabot.Api.EDSM
 {
-    static partial class EdsmAPI
+    static public partial class EdsmAPI
     {
-        public static async Task<Stations> GetSystemStations(string systemName) {
+        public static async Task<EDSMResponse<Stations>> GetSystemStations(string systemName) {
             string url = "https://www.edsm.net/api-system-v1/stations?systemName=" + systemName;
             var response = await EdsmApiCaller<StationsJSON>.GetWebJSONAsync(url);
-            if (response.hasError) {
+            if (response.HasError) {
                 ErrorEvent(response.err);
                 return null;
             }
-            return response.response.Convert();
+            return response.response.Convert((int)response.StatusCode, response.StatusCodeMessage);
+            
         }
         public static async Task<Deaths> GetSystemDeaths(string systemName) {
             string url = "https://www.edsm.net/api-system-v1/deaths?systemName=" + systemName;
             var response = await EdsmApiCaller<DeathsJSON>.GetWebJSONAsync(url);
-            if (response.hasError) {
+            if (response.HasError) {
                 ErrorEvent(response.err);
                 return null;
             }
@@ -29,7 +31,7 @@ namespace Orcabot.Api.EDSM
         public static async Task<Traffic> GetSystemTraffic(string systemName) {
             string url = "https://www.edsm.net/api-system-v1/traffic?systemName=" + systemName;
             var response = await EdsmApiCaller<TrafficJSON>.GetWebJSONAsync(url);
-            if (response.hasError) {
+            if (response.HasError) {
                 ErrorEvent(response.err);
                 return null;
             }
@@ -40,7 +42,7 @@ namespace Orcabot.Api.EDSM
 
             string url = GenerateURL();
             var response = await EdsmApiCaller<InProximityJSON>.GetWebJSONAsync(url);
-            if (response.hasError) {
+            if (response.HasError) {
                 ErrorEvent(response.err);
                 return null;
             }
@@ -56,7 +58,7 @@ namespace Orcabot.Api.EDSM
         public static async Task<SystemJSON> GetSystemData(string systemName) {
             string url = "https://www.edsm.net/api-v1/system?systemName=" + systemName;
             var response = await EdsmApiCaller<SystemJSON>.GetWebJSONAsync(url);
-            if (response.hasError) {
+            if (response.HasError) {
                 ErrorEvent(response.err);
                 return null;
             }
