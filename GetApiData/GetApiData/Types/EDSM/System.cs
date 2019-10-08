@@ -49,14 +49,16 @@ namespace Orcabot.Api.Types.EDSM.StarSystem
 
 
                 Orcabot.Types.Station[] ParseStations(StationsJSONEntry[] json) {
+                    if (json == null) //If the json is null, return null. the JSON is null when the system does not exist
+                        return null;
                     List<Orcabot.Types.Station> returnStations = new List<Orcabot.Types.Station>(json.Length);
                     foreach(var entry in json) {
                         Orcabot.Types.Station s = new Orcabot.Types.Station {
                             Distance = entry.distanceToArrival ?? -1,
-                            Economy = GetEconomy(entry.economy),
+                            Economy = Systems.Helper.StarSystemHelper.GetEconomyFromEDSMString(entry.economy),
                             Name = entry.name,
                             Type = GetStationType(entry.type),
-                            StationFacilities = GetStationFacilities(entry.haveMarket, entry.haveShipyard, entry.otherServices, GetEconomy(entry.economy))
+                            StationFacilities = GetStationFacilities(entry.haveMarket, entry.haveShipyard, entry.otherServices, Systems.Helper.StarSystemHelper.GetEconomyFromEDSMString(entry.economy))
                         };
                         returnStations.Add(s);
                     }
@@ -92,42 +94,7 @@ namespace Orcabot.Api.Types.EDSM.StarSystem
                                 return StationType.Unknown;
                         }
                     }
-                    Economy GetEconomy(string eco) {
-                        if (string.IsNullOrWhiteSpace(eco))
-                            return Economy.Unknown;
-                        switch (eco.ToLower().Trim()) {
-                            case "agriculture":
-                                return Economy.Agriculture;
-                            case "colony":
-                                return Economy.Colony;
-                            case "extraction":
-                                return Economy.Extraction;
-                            case "high tech":
-                                return Economy.HighTech;
-                            case "industrial":
-                                return Economy.Industrial;
-                            case "military":
-                                return Economy.Military;
-                            case "refinery":
-                                return Economy.Refinery;
-                            case "service":
-                                return Economy.Service;
-                            case "terraforming":
-                                return Economy.Terraforming;
-                            case "tourism":
-                                return Economy.Tourism;
-                            case "prison":
-                                return Economy.PrisonColony;
-                            case "repair":
-                                return Economy.Repair;
-                            case "rescue":
-                                return Economy.Rescue;
-                            case "damaged":
-                                return Economy.Damaged;
-                            default:
-                                return Economy.Unknown;
-                        }
-                    }
+                    
                     
                     ///<summary> Returns a list of Facilities. unfortunately the API call only returns market and shipyard.</summary>
                     List<StationFacility> GetStationFacilities(bool market, bool shipyard,string[] services,Economy eco) {
@@ -213,7 +180,7 @@ namespace Orcabot.Api.Types.EDSM.StarSystem
     #region Traffic
     public class TrafficJSON : IApiResponse
     {
-        public int? id, id64;
+        public int? id;
         public string name, url;
         public TrafficJSONSummary traffic;
         public Dictionary<string, int> breakdown;
@@ -227,20 +194,51 @@ namespace Orcabot.Api.Types.EDSM.StarSystem
     {
         public static class TrafficHelper
         {
-            public static Traffic Convert(this TrafficJSON traffic) {
-                throw new NotImplementedException();
+            public static EDSMResponse<Traffic> Convert(this TrafficJSON traffic, int? htmlStatus, string htmlStatusMessage) {
+                
+                if (traffic == null || traffic.traffic == null)
+                    return new EDSMResponse<Traffic> {
+                        HTMLStatus = htmlStatus ?? -1,
+                        HTMLStatusResponse = htmlStatusMessage,
+                        Message = "The API responded with an empty Object. There is probably no such system.",
+                        MessageNumber = 1
+                    };
+
+                var returnObj = new Traffic {
+                    Day = traffic.traffic.day,
+                    Week = traffic.traffic.week,
+                    AllTime = traffic.traffic.total,
+                    SystemName = traffic.name,
+                    SystemURL = traffic.url,
+                    Breakdown = traffic.breakdown
+                };
+                return new EDSMResponse<Traffic> {
+                    HTMLStatus = htmlStatus ?? -1,
+                    HTMLStatusResponse = htmlStatusMessage,
+                    Data = returnObj,
+                    Message = null,
+                    MessageNumber = -1 // N/A on this endpoint
+                };
+
+
             }
         }
     }
-    public class Traffic
+    public class Traffic : IApiConverted
     {
-        //TODO;
+        public int Day { get; set; }
+        public int Week { get; set; }
+        public int AllTime { get; set; }
+
+        public Dictionary<string,int> Breakdown { get; set; }
+        public string SystemName { get; set; }
+        public string SystemURL { get; set; }
     }
     #endregion
     #region Deaths
     public class DeathsJSON : IApiResponse
     {
-        public int? id, id64;
+        public int? id;
         public string name, url;
         public TrafficJSONSummary deaths;
     }
@@ -248,14 +246,42 @@ namespace Orcabot.Api.Types.EDSM.StarSystem
     {
         public static class DeathsHelper
         {
-            public static Deaths Convert(this DeathsJSON deaths) {
-                throw new NotImplementedException();
+            public static EDSMResponse< Deaths >Convert(this DeathsJSON deaths,int? htmlStatus, string htmlStatusMessage) {
+                if (deaths == null || deaths.deaths == null)
+                    return new EDSMResponse<Deaths> {
+                        HTMLStatus = htmlStatus ?? -1,
+                        HTMLStatusResponse = htmlStatusMessage,
+                        Message = "The API responded with an empty Object. There is probably no such system.",
+                        MessageNumber = 1
+                    };
+                var returnObj = new Deaths {
+                    SystemName = deaths.name,
+                    SystemURL = deaths.url,
+
+                    Day = deaths.deaths.day,
+                    Week = deaths.deaths.week,
+                    AllTime = deaths.deaths.total
+
+                };
+              
+                return new EDSMResponse<Deaths> {
+                    Data = returnObj,
+                    HTMLStatus = htmlStatus ?? -1,
+                    HTMLStatusResponse = htmlStatusMessage,
+                    Message = null,
+                    MessageNumber = -1 //Endpoint doesnt respond with a messagenumber
+                };
+
             }
         }
     }
-    public class Deaths
+    public class Deaths : IApiConverted
     {
-        //TODO
+        public string SystemName { get; set; }
+        public int Day { get; set; }
+        public int Week { get; set; }
+        public int AllTime { get; set; }
+        public string SystemURL { get; set; }
     }
     #endregion
 }

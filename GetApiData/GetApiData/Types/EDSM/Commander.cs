@@ -25,18 +25,33 @@ namespace Orcabot.Api.Types.EDSM.Commander
         public static class JSONRanksHelper
         {
             public static EDSMResponse<Ranks> Convert(this JSONRanks c,int? htmlStatus, string htmlStatusMessage) {
-                Ranks ranks = ranks = ParseRanks();
-
-                return new EDSMResponse<Ranks> {
-                    Message = c.msg,
-                    MessageNumber = c.msgnum ?? -1,
-                    Data = ranks,
+                var wrapper = new EDSMResponse<Ranks> {
                     HTMLStatus = htmlStatus ?? -1,
                     HTMLStatusResponse = htmlStatusMessage
                 };
+                if(c == null) {
+                    wrapper.MessageNumber = 1;
+                    wrapper.Message = "API returned an empty object. This is unusual.";
+                    return wrapper;
+                }
+                Ranks ranks =  ParseRanks();
+                if(ranks != null) {
+                    wrapper.Message = c.msg;
+                    wrapper.MessageNumber = c.msgnum ?? -1;
+                    wrapper.Data = ranks;
+                    return wrapper;
+                }
+                //  Workaround for a bug in the EDSM Api. Refer to https://github.com/EDSM-NET/FrontEnd/issues/322
+                wrapper.MessageNumber = (c.msgnum == 201 || c.msgnum == 203) ? c.msgnum??-1 : 207;
+                wrapper.Message = (c.msgnum == 201 || c.msgnum == 203) ? htmlStatusMessage : "Commander name not found. CMDR might not exist or has their profile set to private";
+                return wrapper;
+
+
 
                 Ranks ParseRanks(){
                     if (c == null)
+                        return null;
+                    if (c.ranks == null)
                         return null;
                     return new Ranks {
                         Combat = (Combat)c.ranks.Combat,

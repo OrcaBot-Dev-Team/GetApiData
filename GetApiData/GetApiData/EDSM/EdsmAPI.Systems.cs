@@ -4,6 +4,8 @@ using Orcabot.Api.Types.EDSM.StarSystem;
 using Orcabot.Api.Types.EDSM.StarSystem.Helper;
 using Orcabot.Api.Types.EDSM.Systems;
 using Orcabot.Api.Types;
+using Orcabot.Api.EDSM;
+using Orcabot.Api.Types.EDSM.Systems.Helper;
 
 namespace Orcabot.Api.EDSM
 {
@@ -19,34 +21,57 @@ namespace Orcabot.Api.EDSM
             return response.response.Convert((int)response.StatusCode, response.StatusCodeMessage);
             
         }
-        public static async Task<Deaths> GetSystemDeaths(string systemName) {
+        public static async Task<EDSMResponse<Deaths>> GetSystemDeaths(string systemName) {
             string url = "https://www.edsm.net/api-system-v1/deaths?systemName=" + systemName;
             var response = await EdsmApiCaller<DeathsJSON>.GetWebJSONAsync(url);
             if (response.HasError) {
                 ErrorEvent(response.err);
-                return null;
+                return new EDSMResponse<Deaths> {
+                    Data = null,
+                    HTMLStatus = (int)response.StatusCode,
+                    HTMLStatusResponse = response.StatusCodeMessage,
+                    Message = response.err.Message,
+                    MessageNumber = 1
+                };
             }
-            return response.response.Convert();
+            return response.response.Convert((int)response.StatusCode,response.StatusCodeMessage);
         }
-        public static async Task<Traffic> GetSystemTraffic(string systemName) {
+        public static async Task<EDSMResponse<Traffic>> GetSystemTraffic(string systemName) {
             string url = "https://www.edsm.net/api-system-v1/traffic?systemName=" + systemName;
             var response = await EdsmApiCaller<TrafficJSON>.GetWebJSONAsync(url);
             if (response.HasError) {
                 ErrorEvent(response.err);
-                return null;
+                return new EDSMResponse<Traffic> {
+                    Data = null,
+                    HTMLStatus = (int)response.StatusCode,
+                    HTMLStatusResponse = response.StatusCodeMessage,
+                    Message = response.err.Message,
+                    MessageNumber = 1
+                };
             }
-            return response.response.Convert();
+            return response.response.Convert((int)response.StatusCode,response.StatusCodeMessage);
         }
 
-        public static async Task<InProximityJSON> GetSystemsInRadius(string systemName, Orcabot.Types.Coordinate coordinate = default, uint radius = 40, bool useSquareInsteadOfSphere = false) {
-
+        public static async Task<EDSMResponse<InProximity>> GetSystemsInRadius(string systemName, Orcabot.Types.Coordinate coordinate = default, uint radius = 40, bool useSquareInsteadOfSphere = false) {
+            uint maxRadiusAllowed = (useSquareInsteadOfSphere) ? (uint)200 : (uint)100;
+            if (radius > maxRadiusAllowed)
+                radius = maxRadiusAllowed;
             string url = GenerateURL();
-            var response = await EdsmApiCaller<InProximityJSON>.GetWebJSONAsync(url);
+            var response = await EdsmApiCallerArray<InProximityJSONEntry>.GetWebJSONAsync(url);
             if (response.HasError) {
                 ErrorEvent(response.err);
-                return null;
+                return new EDSMResponse<InProximity> {
+                    HTMLStatus = (int?)response.StatusCode ?? -1,
+                    HTMLStatusResponse = response.StatusCodeMessage,
+                    Message = response.err.Message,
+                    MessageNumber = -1,
+                    Data = null
+
+                };
             }
-            return response.response;
+           
+        
+            return response.response.Convert((int?)response.StatusCode,response.StatusCodeMessage);
 
             string GenerateURL() {
                 bool useCoordinate = !coordinate.Equals(default(Orcabot.Types.Coordinate));
@@ -55,14 +80,22 @@ namespace Orcabot.Api.EDSM
                 return $"https://www.edsm.net/api-v1/{type}-systems?radius={radius}&showCoordinates=1&showPermit=1&showInformation=1&{seachParam}";
             }
         }
-        public static async Task<SystemJSON> GetSystemData(string systemName) {
-            string url = "https://www.edsm.net/api-v1/system?systemName=" + systemName;
+        public static async Task<EDSMResponse<StarSystem>> GetSystemData(string systemName) {
+            string url = "https://www.edsm.net/api-v1/system?showInformation=1&showId=1&showCoordinates=1&showPrimaryStar=1&showPermit=1&systemName=" + systemName;
             var response = await EdsmApiCaller<SystemJSON>.GetWebJSONAsync(url);
+           
             if (response.HasError) {
                 ErrorEvent(response.err);
-                return null;
+                return new EDSMResponse<StarSystem> {
+                    HTMLStatus = (int?)response.StatusCode ?? -1,
+                    HTMLStatusResponse = response.StatusCodeMessage,
+                    Message = response.err.Message,
+                    MessageNumber = -1,
+                    Data = null
+                };
             }
-            return response.response;
+            
+            return response.response.Convert((int?)response.StatusCode, response.StatusCodeMessage) ;
         }
     }
 }

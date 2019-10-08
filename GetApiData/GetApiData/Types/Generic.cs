@@ -19,6 +19,13 @@ namespace Orcabot.Api.Types
 
 
     }
+    /// <summary>
+    /// This will take the given Generic, and will return an array of the given type
+    /// </summary>
+    public interface IApiResonseAsArray
+    {
+
+    }
 
     public class EDSMResponse<T> where T:IApiConverted
     {
